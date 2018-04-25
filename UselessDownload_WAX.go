@@ -13,7 +13,7 @@ func Download_POST_WAX(myUrl string,myJosnBody []byte) (string , error) {
 		return "" ,errr
 	}
 	httpreq.Header.Add("Content-Type","application/json")
-	resp, errr := MyClient_WithoutProxy.Do(httpreq)
+	resp, errr := MyClient_WithoutProxy_2S.Do(httpreq)
 	if resp != nil {
 		defer resp.Body.Close()
 	}
@@ -32,7 +32,22 @@ func Download_POST_Business(myUrl string,myJosnBody []byte) (string , error) {
 	if errr!=nil{
 		return "" ,errr
 	}
-	resp, errr := MyClient_WithoutProxy.Do(httpreq)
+	resp, errr := MyClient_WithoutProxy_2S.Do(httpreq)
+	if resp != nil {
+		defer resp.Body.Close()
+	}
+	if errr!=nil{
+		return "" ,errr
+	}
+	body, errr := ioutil.ReadAll(resp.Body)
+	if errr!=nil{
+		return "" ,errr	
+	}
+	return  string(body) , nil
+}
+
+func Do_Request(myReq *http.Request)(string , error){
+	resp, errr := MyClient_WithoutProxy.Do(myReq)
 	if resp != nil {
 		defer resp.Body.Close()
 	}

@@ -24,7 +24,7 @@ func init(){
 	if nil!=err{
 		fmt.Println(err.Error())
 	}
-	var transport_WithoutProxy = http.Transport{
+	transport_WithoutProxy = http.Transport{
 		TLSHandshakeTimeout : myTimeout,
 		Dial: dialTimeout,
 		DisableKeepAlives : true,
@@ -34,6 +34,28 @@ func init(){
 		Transport: &transport_WithoutProxy,
 		//Jar :MyJar,
 		Timeout: myTimeout,
+	}
+	transport_WithoutProxy_2S = http.Transport{
+		TLSHandshakeTimeout : myTimeout_2S,
+		Dial: dialTimeout_2S,
+		DisableKeepAlives : true,
+		//Proxy: http.ProxyURL(FiddlerProxy),//saya
+	}
+	MyClient_WithoutProxy_2S  = &http.Client{
+		Transport: &transport_WithoutProxy_2S,
+		//Jar :MyJar,
+		Timeout: myTimeout,
+	}
+	transport_WithoutProxy_500MS = http.Transport{
+		TLSHandshakeTimeout : myTimeout_500MS,
+		Dial: dialTimeout_500MS,
+		DisableKeepAlives : true,
+		//Proxy: http.ProxyURL(FiddlerProxy),//saya
+	}
+	MyClient_WithoutProxy_500MS  = &http.Client{
+		Transport: &transport_WithoutProxy_500MS,
+		//Jar :MyJar,
+		Timeout: myTimeout_500MS,
 	}
 }
 func InitSelf(){
@@ -48,7 +70,25 @@ func dialTimeout(network, addr string) (net.Conn, error) {
 	c.SetDeadline(deadline)
 	return c, nil
 }
+func dialTimeout_2S(network, addr string) (net.Conn, error) {
+    deadline := time.Now().Add(myTimeout_2S)
+	c, err := net.DialTimeout(network, addr, myTimeout_2S)
+	if err != nil {
+		return nil, err
+	}
+	c.SetDeadline(deadline)
+	return c, nil
+}
 
+func dialTimeout_500MS(network, addr string) (net.Conn, error) {
+    deadline := time.Now().Add(myTimeout_500MS)
+	c, err := net.DialTimeout(network, addr, myTimeout_500MS)
+	if err != nil {
+		return nil, err
+	}
+	c.SetDeadline(deadline)
+	return c, nil
+}
 
 func Download_POST(myUrl string,vv url.Values ) (string , bool) {
 	httpreq ,errr := http.NewRequest("POST",myUrl, strings.NewReader(vv.Encode()))
